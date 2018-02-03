@@ -8,7 +8,8 @@ import (
 	"math/big"
 )
 
-const targetBits = 24
+//const targetBits = 24
+const targetBits = 16
 
 var (
 	maxNonce = math.MaxInt64
@@ -67,4 +68,17 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 	fmt.Print("\n\n")
 
 	return nonce, hash[:]
+}
+
+// Validate validate
+func (pow *ProofOfWork) Validate() bool {
+	var hashInt big.Int
+
+	data := pow.prepareData(pow.block.Nonce)
+	hash := sha256.Sum256(data)
+	hashInt.SetBytes(hash[:])
+
+	isValid := hashInt.Cmp(pow.target) == -1
+
+	return isValid
 }
